@@ -1,0 +1,28 @@
+version: '3.6'
+
+# HOME-ASSISTANT NEEDS THIS.
+# THIS SHOULD WORK IN EITHER COMPOSE OR SWARM.
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:latest
+
+# We're not a web server so Let's Encrypt fails.
+#    env_file: .env
+#    environment:
+#      VIRTUAL_PORT: 9001
+
+    volumes:
+      - ${PWD}/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    ports:
+      - "9001:9001"
+      - "1883:1883"
+    networks:
+      - proxy_net
+
+networks:
+  # Any services that want to be proxied need to use this network
+  proxy_net:
+    external: true
